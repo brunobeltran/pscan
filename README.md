@@ -7,19 +7,17 @@ Combinatorial parameter sweeps, joint parameter sweeps, "scientific" parameter
 sweeps, and advanced options for how many times to repeat simulations are
 available.
 
-TODO: implement "scientific" sweeps, where one parameter is varied at a time
-from baseline.
-
 This module was written after the author got tired of writing the same boiler
 plate code every time he wanted to sweep parameters in his simulations.
 
 The impetus for the design of the module was the realization that there are
 basically only four types of "parameter sweeps" that ever really need to be
 done.
-    1) run the same parameters many times (e.g. stoch simulation)
-    2) vary certain parameters jointly (e.g. (i,j) = (1,2), (2,3), (3,4), ... )
-    3) vary parameters combinatorially (e.g. (i,j) = (1,1), (1,2), (2,1), (2,2))
-    4) vary "scientifically" (e.g. (i0,j),(i,j0) for fixed i0,j0, varying i,j)
+
+1. run the same parameters many times (e.g. stoch simulation)
+2. vary certain parameters jointly (e.g. (i,j) = (1,2), (2,3), (3,4), ... )
+3. vary parameters combinatorially (e.g. (i,j) = (1,1), (1,2), (2,1), (2,2))
+4. vary "scientifically" (e.g. (i0,j),(i,j0) for fixed i0,j0, varying i,j)
 
 All three of these can be specified declaratively (e.g. in English sentences)
 relatively easily, but usually each requires coding an easy-to-goof up nested
