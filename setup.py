@@ -7,7 +7,7 @@ def readme():
         return f.read()
 
 setup(name='pscan',
-      version='1.0.0',
+      version='1.0.1',
       description='Micro-DSL for specifying parameter scans easily',
       long_description=readme(),
       author='Bruno Beltran',
