@@ -6,7 +6,6 @@ TODO: implement "scientific" sweeps, where one parameter is varied at a time
 from baseline."""
 from functools import reduce # for roll-your-own product()
 import operator # for operator.mul in map in roll-your-own product()
-import numpy as np # just for unravel_index
 import collections
 
 # class P:
@@ -26,27 +25,42 @@ import collections
 #             keys = dic.keys()
 #         return cls([P(key, dic[key]) for key in keys])
 
-def unravel_index(i, shape):
+def unravel_index(i, shape, order='C'):
     """Rewrite of np.unravel_index that allows shape to have more than 32
-    dimensions."""
-    if len(shape) <= 32:
-        np.unravel_index(i, shape)
-    # equivalend to cumulative_sizes = np.cumprod(shape[::-1])[::-1]
+    dimensions.
+
+    numpy arrays cannot be of dimension larger than 32. to avoid issues and
+    unecessary dependencies we just cut out numpy entirely
+    """
+    # equivalent to cumulative_sizes = np.cumprod(shape[::-1])[::-1]
+    # we product the sizes together in this way because the last dimension
+    # "varies fastest" (C-style arrays) by default when ravel is used
     cumulative_sizes = []
     j = 1
     for size in shape[::-1]:
         j *= int(size)
         cumulative_sizes.append(j)
-    cumulative_sizes = cumulative_sizes[::-1]
-    if cumulative_sizes[0] <= i:
+    # the last element is just prod(shape), or the total size of the array
+    # being indexed into
+    if cumulative_sizes[-1] <= i:
         raise ValueError('Requested index outside of range.')
+    # we're going to iterate through, taking interger division then
+    # remainder, starting with the largest number and working our way down
+    cumulative_sizes = cumulative_sizes[::-1]
+    # unravel index algorithm is just like the base change algorithm, but where
+    # each digit can be of a "different" base
     indexes = []
     j = i
-    # base change algorithm, but each digit can be of a different base
     for size in cumulative_sizes[1:]:
         indexes.append(j // size)
         j = j % size
     indexes.append(j)
+    if order == 'C':
+        pass
+    elif order == 'F':
+        indexes = indexes[::-1]
+    else:
+        raise ValueError('Expected "C" or "F" for "order" kwarg.')
     return indexes
 
 def get_first(iterable, default=None):
